@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breakfast orders</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background:#f7f5f2; margin:0; padding:20px; }
+  .wrap { max-width:800px; margin:0 auto; }
+  h1 { color:#3a2a1a; }
+  table { width:100%; border-collapse:collapse; background:white; border-radius:10px; overflow:hidden; }
+  th, td { text-align:left; padding:10px 12px; font-size:13px; border-bottom:1px solid #eee; }
+  th { background:#efe6d8; color:#3a2a1a; }
+  .flag { color:#a35b00; font-size:12px; }
+  a.btn { display:inline-block; margin-bottom:16px; padding:12px 20px; background:#8a5a2b; color:white;
+          text-decoration:none; border-radius:8px; font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Breakfast orders</h1>
+    <a class="btn" href="/download{% if passcode %}?passcode={{ passcode }}{% endif %}">Download as Excel</a>
+    <table>
+      <tr><th>Room</th><th>Guest</th><th>Service</th><th>Time</th><th>Option</th><th>Flag</th></tr>
+      {% for id, submitted_at, d in orders %}
+      <tr>
+        <td>{{ d.room_number or "-" }}</td>
+        <td>{{ d.guest_name or "-" }}</td>
+        <td>{{ d.service_style or "-" }}</td>
+        <td>{{ d.time or "-" }}</td>
+        <td>{{ d.option or "-" }}</td>
+        <td class="flag">{{ d.special_requirements or "" }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>

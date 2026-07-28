@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Provence - Breakfast Order</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background:#f7f5f2; margin:0; padding:0; }
+  .card { max-width:420px; margin:40px auto; background:white; border-radius:14px; padding:28px 24px;
+          box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+  h1 { font-size:20px; margin:0 0 6px 0; color:#3a2a1a; }
+  p.sub { color:#777; font-size:14px; margin:0 0 20px 0; }
+  .tabs { display:flex; margin-bottom:20px; border-radius:10px; overflow:hidden; border:1px solid #e0d5c3; }
+  .tab { flex:1; text-align:center; padding:12px; cursor:pointer; font-size:14px; font-weight:600;
+         color:#8a5a2b; background:#fffaf3; }
+  .tab.active { background:#8a5a2b; color:white; }
+  input[type=file] { display:block; width:100%; padding:14px; margin-bottom:16px; border:2px dashed #c9a876;
+                      border-radius:10px; background:#fffaf3; font-size:15px; box-sizing:border-box; }
+  textarea { width:100%; min-height:140px; padding:14px; margin-bottom:16px; border:2px solid #e0d5c3;
+             border-radius:10px; font-size:15px; box-sizing:border-box; font-family:inherit; }
+  button { width:100%; padding:14px; font-size:16px; font-weight:600; color:white; background:#8a5a2b;
+           border:none; border-radius:10px; cursor:pointer; }
+  button:active { background:#6f4720; }
+  .flash { background:#fdecea; color:#a33; padding:10px 14px; border-radius:8px; margin-bottom:16px; font-size:14px; }
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .hint { color:#999; font-size:12px; margin:-10px 0 16px 0; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>Breakfast Order</h1>
+    <p class="sub">Take a photo of the form, or type the order like you would in a message - no login needed.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for m in messages %}
+          <div class="flash">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="tabs">
+      <div class="tab active" id="tab-photo" onclick="showPanel('photo')">Photo</div>
+      <div class="tab" id="tab-text" onclick="showPanel('text')">Type it</div>
+    </div>
+
+    <div class="panel active" id="panel-photo">
+      <form action="/submit" method="post" enctype="multipart/form-data">
+        <input type="file" name="photo" accept="image/*" capture="environment" required>
+        <button type="submit">Submit photo</button>
+      </form>
+    </div>
+
+    <div class="panel" id="panel-text">
+      <form action="/submit_text" method="post">
+        <textarea name="message" placeholder="e.g. Room 6, Mashilo Christopher, sit down 7:30, warm breakfast + yoghurt cereal fruit take away, plain yoghurt, muesli, toasted brown, hard fried eggs, bacon and mini cheese griller, potato hash brown" required></textarea>
+        <p class="hint">Write it however feels natural - full sentences or shorthand both work.</p>
+        <button type="submit">Submit order</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showPanel(which) {
+      document.getElementById('tab-photo').classList.toggle('active', which === 'photo');
+      document.getElementById('tab-text').classList.toggle('active', which === 'text');
+      document.getElementById('panel-photo').classList.toggle('active', which === 'photo');
+      document.getElementById('panel-text').classList.toggle('active', which === 'text');
+    }
+  </script>
+</body>
+</html>
