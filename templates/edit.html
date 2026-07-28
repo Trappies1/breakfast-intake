@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit order</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; background:#f7f5f2; margin:0; padding:20px; }
+  .wrap { max-width:520px; margin:0 auto; background:white; border-radius:14px; padding:24px;
+          box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+  h1 { font-size:19px; color:#3a2a1a; margin-top:0; }
+  label { display:block; font-size:12px; color:#888; margin:14px 0 4px 0; }
+  input, textarea { width:100%; padding:10px; font-size:14px; border:1px solid #ddd; border-radius:8px;
+                     box-sizing:border-box; font-family:inherit; }
+  textarea { min-height:70px; }
+  .checkbox-row { display:flex; align-items:center; gap:8px; margin-top:14px; }
+  .checkbox-row label { margin:0; font-size:13px; color:#3a2a1a; }
+  .checkbox-row input { width:auto; }
+  button { width:100%; margin-top:22px; padding:14px; font-size:16px; font-weight:600; color:white;
+           background:#8a5a2b; border:none; border-radius:10px; cursor:pointer; }
+  a.back { display:block; text-align:center; margin-top:12px; color:#8a5a2b; font-size:13px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Edit order - Room {{ d.room_number or "?" }}</h1>
+    <form method="post">
+      <input type="hidden" name="passcode" value="{{ passcode }}">
+
+      <label>Guest name</label>
+      <input name="guest_name" value="{{ d.guest_name or '' }}">
+
+      <label>Room number</label>
+      <input name="room_number" value="{{ d.room_number or '' }}">
+
+      <label>Service style</label>
+      <input name="service_style" value="{{ d.service_style or '' }}">
+
+      <label>Time</label>
+      <input name="time" value="{{ d.time or '' }}">
+
+      <label>Fruit juice</label>
+      <input name="fruit_juice" value="{{ d.fruit_juice or '' }}">
+
+      <label>Yoghurt</label>
+      <input name="yoghurt" value="{{ d.yoghurt or '' }}">
+
+      <label>Add fruit</label>
+      <input name="add_fruit" value="{{ d.add_fruit or '' }}">
+
+      <label>Cereal</label>
+      <input name="cereal" value="{{ d.cereal or '' }}">
+
+      <label>Bread</label>
+      <input name="bread" value="{{ d.bread or '' }}">
+
+      <label>Breakfast option (Create your own / Dagwood / Wrap / etc.)</label>
+      <input name="option" value="{{ d.option or '' }}">
+
+      <label>Eggs</label>
+      <input name="eggs" value="{{ d.eggs or '' }}">
+
+      <label>First meat</label>
+      <input name="meat_1" value="{{ d.meat_1 or '' }}">
+
+      <label>Second meat</label>
+      <input name="meat_2" value="{{ d.meat_2 or '' }}">
+
+      <label>Veg / starch (or Dagwood/Wrap side)</label>
+      <input name="veg_starch" value="{{ d.veg_starch or '' }}">
+
+      <label>Dagwood bread (White/Brown)</label>
+      <input name="dagwood_bread" value="{{ d.dagwood_bread or '' }}">
+
+      <label>Wrap/croissant filling 1</label>
+      <input name="wrap_filling_1" value="{{ d.wrap_filling_1 or '' }}">
+
+      <label>Wrap/croissant filling 2</label>
+      <input name="wrap_filling_2" value="{{ d.wrap_filling_2 or '' }}">
+
+      <div class="checkbox-row">
+        <input type="checkbox" name="lunch_pack" id="lunch_pack" {% if d.lunch_pack %}checked{% endif %}>
+        <label for="lunch_pack">Lunch pack ordered</label>
+      </div>
+
+      <label>Lunch pack bread</label>
+      <input name="lunch_pack_bread" value="{{ d.lunch_pack_bread or '' }}">
+
+      <label>Lunch pack filling</label>
+      <input name="lunch_pack_filling" value="{{ d.lunch_pack_filling or '' }}">
+
+      <label>Lunch pack extras (comma-separated)</label>
+      <input name="lunch_pack_extras" value="{{ d.lunch_pack_extras_str or '' }}">
+
+      <label>Lunch pack drink</label>
+      <input name="lunch_pack_drink" value="{{ d.lunch_pack_drink or '' }}">
+
+      <label>Special requirements / flags</label>
+      <textarea name="special_requirements">{{ d.special_requirements or '' }}</textarea>
+
+      <button type="submit">Save changes</button>
+    </form>
+    <a class="back" href="/orders{% if passcode %}?passcode={{ passcode }}{% endif %}">&larr; Back to list</a>
+  </div>
+</body>
+</html>

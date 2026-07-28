@@ -21,7 +21,7 @@
     <h1>Breakfast orders</h1>
     <a class="btn" href="/download{% if passcode %}?passcode={{ passcode }}{% endif %}">Download as Excel</a>
     <table>
-      <tr><th>Room</th><th>Guest</th><th>Service</th><th>Time</th><th>Option</th><th>Flag</th></tr>
+      <tr><th>Room</th><th>Guest</th><th>Service</th><th>Time</th><th>Option</th><th>Flag</th><th></th></tr>
       {% for id, submitted_at, d in orders %}
       <tr>
         <td>{{ d.room_number or "-" }}</td>
@@ -30,6 +30,7 @@
         <td>{{ d.time or "-" }}</td>
         <td>{{ d.option or "-" }}</td>
         <td class="flag">{{ d.special_requirements or "" }}</td>
+        <td><a href="/orders/{{ id }}/edit{% if passcode %}?passcode={{ passcode }}{% endif %}">Edit</a></td>
       </tr>
       {% endfor %}
     </table>

@@ -230,6 +230,13 @@ def call_claude_vision(image_bytes, media_type):
     return json.loads(text)
 
 
+def passcode_ok():
+    if not STAFF_PASSCODE:
+        return True
+    supplied = request.values.get("passcode")
+    return supplied == STAFF_PASSCODE
+
+
 @app.route("/", methods=["GET"])
 def upload_page():
     return render_template("upload.html")
@@ -288,16 +295,68 @@ def submit_text():
     return render_template("success.html", data=extracted)
 
 
+EDITABLE_FIELDS = [
+    "guest_name", "room_number", "service_style", "time", "fruit_juice", "yoghurt",
+    "add_fruit", "cereal", "bread", "option", "eggs", "meat_1", "meat_2",
+    "veg_starch", "dagwood_bread", "wrap_filling_1", "wrap_filling_2",
+    "lunch_pack_bread", "lunch_pack_filling", "lunch_pack_drink",
+    "special_requirements",
+]
+
+
+@app.route("/orders/<int:order_id>/edit", methods=["GET", "POST"])
+def edit_order(order_id):
+    if not passcode_ok():
+        return render_template("passcode.html")
+
+    init_db()
+    conn = sqlite3.connect(DB_PATH)
+
+    if request.method == "POST":
+        row = conn.execute(
+            "SELECT data_json FROM orders WHERE id = ?", (order_id,)
+        ).fetchone()
+        if row is None:
+            conn.close()
+            return "Order not found", 404
+
+        d = json.loads(row[0])
+        for field in EDITABLE_FIELDS:
+            value = request.form.get(field, "")
+            d[field] = value.strip() if value.strip() != "" else None
+
+        extras_raw = request.form.get("lunch_pack_extras", "")
+        d["lunch_pack_extras"] = [e.strip() for e in extras_raw.split(",") if e.strip()]
+        d["lunch_pack"] = bool(request.form.get("lunch_pack"))
+
+        conn.execute(
+            "UPDATE orders SET data_json = ? WHERE id = ?",
+            (json.dumps(d), order_id),
+        )
+        conn.commit()
+        conn.close()
+        return redirect(url_for("orders", passcode=request.form.get("passcode", "")))
+
+    row = conn.execute(
+        "SELECT data_json FROM orders WHERE id = ?", (order_id,)
+    ).fetchone()
+    conn.close()
+    if row is None:
+        return "Order not found", 404
+
+    d = json.loads(row[0])
+    d["lunch_pack_extras_str"] = ", ".join(d.get("lunch_pack_extras") or [])
+    return render_template(
+        "edit.html", order_id=order_id, d=d, passcode=STAFF_PASSCODE
+    )
+
+
 @app.route("/orders", methods=["GET", "POST"])
 def orders():
-    if STAFF_PASSCODE:
+    if STAFF_PASSCODE and not passcode_ok():
         if request.method == "POST":
-            if request.form.get("passcode") != STAFF_PASSCODE:
-                flash("Incorrect passcode.")
-                return render_template("passcode.html")
-        else:
-            if request.args.get("passcode") != STAFF_PASSCODE:
-                return render_template("passcode.html")
+            flash("Incorrect passcode.")
+        return render_template("passcode.html")
 
     init_db()
     conn = sqlite3.connect(DB_PATH)
